@@ -25,3 +25,4 @@ var/
 .installed.cfg
 *.egg
 MANIFEST
+.local/

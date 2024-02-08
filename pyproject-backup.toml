@@ -1,11 +1,8 @@
 [tool.poetry]
-name = "twitch-stream-notification-backend"
+name = "python-template"
 version = "0.1.0"
-description = "discord.py v2.0"
-authors = ["Replit user <<>>"]
-license = "MIT"
-readme = "README.md"
-packages = [{include = "twitch_stream_notification_backend"}]
+description = ""
+authors = ["Your Name <you@example.com>"]
 
 [tool.poetry.dependencies]
 python = ">=3.10.0,<3.11"
