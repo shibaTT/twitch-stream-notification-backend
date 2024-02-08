@@ -1,4 +1,4 @@
-import discord
+import discord, os
 from discord import app_commands
 from discord.ext import commands
 from views.discord_view import SampleView
@@ -100,6 +100,16 @@ class TwitchNotify(commands.Cog):
         #  - DBに登録されていなければ、IDが存在するかチェックする
         #    - IDが存在すれば、TwitchAPIにWebhookのサブスクライブをし、DBに登録する
         #  - DBに登録されていれば、サブスクライバーテーブルにチャンネルIDを追加する
+
+    @commands.command(name="notification",
+                      description="Description of the notification command")
+    async def notification(self, ctx, caster_id: str):
+        # broadcaster_idに紐づけられているチャンネルIDのリストを取得する
+        channel = discord.utils.get(self.bot.get_all_channels(),
+                                    guild__id=os.getenv("GUILD_ID"),
+                                    id="1203920926366769216")
+        print("CHANNEL INFO is", channel)
+        print(self.bot.get_guild(os.getenv("GUILD_ID")))
 
 
 # bot.run("TOKEN")

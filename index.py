@@ -1,6 +1,14 @@
 from flask import Flask, request, abort
+from notify import TwitchNotify
+import main
+from discord.ext import commands
 
 app = Flask(__name__)
+
+
+@app.route("/")
+def index():
+    return "<h1>Python3 flask connect discord.py</h1>"
 
 
 @app.route("/api/python")
@@ -24,11 +32,13 @@ def streaming_start_detection():
 
 
 @app.route("/api/test", methods=['GET'])
-def test_function():
-    return "test"
+async def test_function():
+    await main.pass_notify("caster_id")
+    return "ok"
 
 
 app.run(debug=True, port=3000, host='0.0.0.0')
+
 if __name__ == 'index':
     # 最初に1回だけ走るなにか
     print("Flask is running!")
