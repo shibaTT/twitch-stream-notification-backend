@@ -1,20 +1,18 @@
 import discord
 from discord import app_commands
 from discord.ext import commands
+from views.discord_view import SampleView, TwitchAddView
 
 
-# Discord UI Kit
-class SampleView(discord.ui.View):  # UIキットを利用するためにdiscord.ui.Viewを継承する
+# Modal Test
+class SampleModal(discord.ui.Modal, title="Test"):
+    name = discord.ui.TextInput(label='Name')
+    answer = discord.ui.TextInput(label='Answer',
+                                  style=discord.TextStyle.paragraph)
 
-    def __init__(self, timeout=180):  # Viewにはtimeoutがあり、初期値は180(s)である
-        super().__init__(timeout=timeout)
-
-    @discord.ui.button(label="OK", style=discord.ButtonStyle.success)
-    async def ok(self, interaction: discord.Interaction,
-                 button: discord.ui.Button):
-        # OKボタンの生成と、押された際の挙動の定義
-        await interaction.response.edit_message(
-            content=f"{interaction.user.mention} OK!", view=None)
+    async def on_submit(self, interaction: discord.Interaction):
+        await interaction.response.send_message(
+            f'Thanks for your response, {self.name}!', ephemeral=True)
 
 
 class TwitchNotify(commands.Cog):
@@ -80,6 +78,26 @@ class TwitchNotify(commands.Cog):
         await interaction.response.defer()
         await interaction.followup.send("ボタンテストです",
                                         view=SampleView(timeout=20))
+
+    @app_commands.command(name="modal_test", description="モーダルテストです")
+    async def modal_test(self, interaction: discord.Interaction):
+        # await interaction.response.defer() # ←これを入れると2回目のresponseはエラーになる
+        await interaction.response.send_modal(SampleModal())
+
+    @app_commands.command(name="add_twitch_channel",
+                          description="Twitchチャンネルを追加します")
+    @app_commands.describe(twitch_id="TwitchのIDを入力してください")
+    async def _add_twitch_channel(self, interaction: discord.Interaction, twitch_id: str):
+        # どうやらtextInputはインタラクションでは使えない様子？Modalのみサポートっぽい
+        # なので、普通にコマンドでやるのがいいかも
+        # command_view = TwitchAddView(timeout=None)
+        # await interaction.response.send_message("", view=command_view)
+        # await interaction.followup.send(command_view.value)
+
+        await interaction.response.defer()
+        # DBにIDが登録されているかチェックする
+        #  - DBに登録されていなければ、IDが存在するかチェックする
+        #  - DBに登録されていれば、サブスクライバーにチャンネルIDを追加する
 
 
 # bot.run("TOKEN")
