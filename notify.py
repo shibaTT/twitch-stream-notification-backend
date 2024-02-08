@@ -1,7 +1,7 @@
 import discord
 from discord import app_commands
 from discord.ext import commands
-from views.discord_view import SampleView, TwitchAddView
+from views.discord_view import SampleView
 
 
 # Modal Test
@@ -87,7 +87,8 @@ class TwitchNotify(commands.Cog):
     @app_commands.command(name="add_twitch_channel",
                           description="Twitchチャンネルを追加します")
     @app_commands.describe(twitch_id="TwitchのIDを入力してください")
-    async def _add_twitch_channel(self, interaction: discord.Interaction, twitch_id: str):
+    async def _add_twitch_channel(self, interaction: discord.Interaction,
+                                  twitch_id: str):
         # どうやらtextInputはインタラクションでは使えない様子？Modalのみサポートっぽい
         # なので、普通にコマンドでやるのがいいかも
         # command_view = TwitchAddView(timeout=None)
@@ -97,7 +98,8 @@ class TwitchNotify(commands.Cog):
         await interaction.response.defer()
         # DBにIDが登録されているかチェックする
         #  - DBに登録されていなければ、IDが存在するかチェックする
-        #  - DBに登録されていれば、サブスクライバーにチャンネルIDを追加する
+        #    - IDが存在すれば、TwitchAPIにWebhookのサブスクライブをし、DBに登録する
+        #  - DBに登録されていれば、サブスクライバーテーブルにチャンネルIDを追加する
 
 
 # bot.run("TOKEN")

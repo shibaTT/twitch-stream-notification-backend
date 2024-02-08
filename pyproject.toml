@@ -5,12 +5,14 @@ description = "discord.py v2.0"
 authors = ["Replit user <<>>"]
 license = "MIT"
 readme = "README.md"
-packages = [{include = "twitch_stream_notification_backend"}]
+# ↓poetryの並行起動時にエラーが出るのでコメントアウト
+# packages = [{include = "twitch_stream_notification_backend"}] 
 
 [tool.poetry.dependencies]
 python = ">=3.10.0,<3.11"
 discord = "^2.3.2"
 discord-py = "^2.3.2"
+flask = "^3.0.2"
 
 [tool.pyright]
 # https://github.com/microsoft/pyright/blob/main/docs/configuration.md
