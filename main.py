@@ -17,9 +17,7 @@ intents = discord.Intents.default()
 intents.message_content = True
 
 # コグ一覧
-COGS = [
-    "notify",
-]
+COGS = ["notify", "error"]
 
 # 名前下に表示されるアクティビティの設定
 activity = discord.CustomActivity("play /help to help you.",
