@@ -32,14 +32,14 @@ class TwitchNotify(commands.Cog):
         await interaction.followup.send("猫でした")
 
     @app_commands.command(name="help", description="コマンドの一覧を表示します")
-    async def help(self, interaction):
+    async def help(self, interaction: discord.Interaction):
         """
         ヘルプを表示します
         いつか……………。
         """
         # embed = message.create_bot_help_embed(list(self.bot.commands))
         await interaction.response.defer()
-        await interaction.response.send_message("誠意製作中")
+        await interaction.followup.send("誠意製作中", ephemeral=True)
 
     @app_commands.command(name="reload", description="コマンドを再読み込みします")
     async def reload(self, interaction: discord.Interaction):
@@ -55,9 +55,10 @@ class TwitchNotify(commands.Cog):
             self.bot.tree.copy_global_to(guild=guild)
             await self.bot.tree.sync(guild=guild)
 
-            await interaction.followup.send("コマンドを再読み込みしました")
+            # ephemeral=Trueでメッセージ送った人にだけメッセージ返す
+            await interaction.followup.send("コマンドを再読み込みしました", ephemeral=True)
         except discord.HTTPException as e:
-            await interaction.followup.send("エラーが発生しました")
+            await interaction.followup.send("エラーが発生しました", ephemeral=True)
             raise e
 
     @app_commands.command(name="interact_test", description="インタラクトテストです")

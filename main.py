@@ -6,12 +6,15 @@
 
 import asyncio
 import os
+from dotenv import load_dotenv
 
 import discord
 from discord.ext import commands
 
 import help
 import notify
+
+load_dotenv()
 
 # 権限設定
 intents = discord.Intents.default()
@@ -69,6 +72,7 @@ async def pass_notify(caster_id: str):
     # bot情報と共に渡さなければならないので、main経由でnotify.pyに送る
     # await notify.TwitchNotify(client).notification(caster_id)
     twitch_notify = client.get_cog("notify")
+    print("passing to notify.py", twitch_notify)
     if twitch_notify:
         await twitch_notify.notification(caster_id)
 
@@ -79,6 +83,7 @@ def main():
         print(
             "Discord token value is not set. check your .env file or read the manual."
         )
+        exit()
 
     # Extension（Cog）の読み込み
     asyncio.run(add_cogs())
