@@ -11,7 +11,6 @@ import discord
 from discord.ext import commands
 
 import help
-import notify
 
 # 権限設定
 intents = discord.Intents.default()
@@ -62,15 +61,6 @@ async def add_cogs():
         await client.load_extension(cog)
 
     print("COG読み込み終わり！")
-
-
-# Twitch通知
-async def pass_notify(caster_id: str):
-    # bot情報と共に渡さなければならないので、main経由でnotify.pyに送る
-    # await notify.TwitchNotify(client).notification(caster_id)
-    twitch_notify = client.get_cog("notify")
-    if twitch_notify:
-        await twitch_notify.notification(caster_id)
 
 
 def main():

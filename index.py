@@ -1,7 +1,9 @@
+import os
 from flask import Flask, request, abort
 from notify import TwitchNotify
-import main
+from discord import Webhook
 from discord.ext import commands
+import aiohttp  # 他にいいライブラリがあるならそっち使う
 
 app = Flask(__name__)
 
@@ -33,12 +35,15 @@ def streaming_start_detection():
 
 @app.route("/api/test", methods=['GET'])
 async def test_function():
-    await main.pass_notify("caster_id")
-    return "ok"
+    # アクセスするとWebhookのURLを使ってメッセージをポストする
+    async with aiohttp.ClientSession() as session:
+        webhook = Webhook.from_url(os.environ['TEST_WEBHOOK_URL'],
+                                   session=session)
+        await webhook.send("Hello World")
+    return 'test function', 200
 
 
 app.run(debug=True, port=3000, host='0.0.0.0')
-
 if __name__ == 'index':
     # 最初に1回だけ走るなにか
     print("Flask is running!")

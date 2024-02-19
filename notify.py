@@ -86,9 +86,11 @@ class TwitchNotify(commands.Cog):
 
     @app_commands.command(name="add_twitch_channel",
                           description="Twitchチャンネルを追加します")
-    @app_commands.describe(twitch_id="TwitchのIDを入力してください")
-    async def _add_twitch_channel(self, interaction: discord.Interaction,
-                                  twitch_id: str):
+    @app_commands.describe(twitch_id="TwitchのIDを入力してください",
+                           server_channel="送信するDiscordのチャンネル名を選択してください")
+    async def _add_twitch_channel(
+            self, interaction: discord.Interaction, twitch_id: str,
+            server_channel: list[app_commands.Choice[int]]):
         # どうやらtextInputはインタラクションでは使えない様子？Modalのみサポートっぽい
         # なので、普通にコマンドでやるのがいいかも
         # command_view = TwitchAddView(timeout=None)
@@ -100,6 +102,23 @@ class TwitchNotify(commands.Cog):
         #  - DBに登録されていなければ、IDが存在するかチェックする
         #    - IDが存在すれば、TwitchAPIにWebhookのサブスクライブをし、DBに登録する
         #  - DBに登録されていれば、サブスクライバーテーブルにチャンネルIDを追加する
+        #    - チャンネルIDではなく、当該チャンネルにWebhookを送信するための
+        #      URLを取得して保存する方針に変えます
+        # Webhookで送信するためにはまずチャンネルに対してcreate_webhookをする必要がある
+        # その際に、アバター写真やユーザー名を設定する必要があるが、
+        # そのためにはClient.application_info()を設定し、
+        # nameやiconなどを取得して設定するのが丸いと思う
+        # ただし、後からBOT名などを変えても反映はされないので注意
+
+    @_add_twitch_channel.autocomplete("server_channel")
+    async def server_channels_autocomplete(
+            self, interaction: discord.Interaction,
+            current: str) -> list[app_commands.Choice[int]]:
+        channels = interaction.guild.channels
+        return [
+            app_commands.Choice(name=channel.name, value=channel.id)
+            for channel in channels
+        ]
 
     @commands.command(name="notification",
                       description="Description of the notification command")
