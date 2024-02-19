@@ -69,6 +69,7 @@ def main():
         print(
             "Discord token value is not set. check your .env file or read the manual."
         )
+        exit()
 
     # Extension（Cog）の読み込み
     asyncio.run(add_cogs())

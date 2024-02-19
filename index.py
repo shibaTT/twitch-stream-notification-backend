@@ -5,7 +5,13 @@ from discord import Webhook
 from discord.ext import commands
 import aiohttp  # 他にいいライブラリがあるならそっち使う
 
+import sys, asyncio
+
+if sys.platform == "win32" and (3, 8, 0) <= sys.version_info < (3, 9, 0):
+    asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
+
 app = Flask(__name__)
+
 
 
 @app.route("/")
