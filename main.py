@@ -11,7 +11,7 @@ from dotenv import load_dotenv
 import discord
 from discord.ext import commands
 
-import help
+from help import OriginalHelpCommand
 
 load_dotenv()
 
@@ -28,7 +28,7 @@ activity = discord.CustomActivity("play /help to help you.",
 
 # botの生成
 client = commands.Bot(command_prefix="/",
-                      help_command=help.OriginalHelpCommand(),
+                      help_command=OriginalHelpCommand(),
                       intents=intents,
                       activity=activity)
 
