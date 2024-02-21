@@ -6,11 +6,14 @@
 
 import asyncio
 import os
+from dotenv import load_dotenv
 
 import discord
 from discord.ext import commands
 
 import help
+
+load_dotenv()
 
 # 権限設定
 intents = discord.Intents.default()
