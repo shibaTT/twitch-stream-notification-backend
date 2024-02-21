@@ -43,23 +43,21 @@ class TwitchNotify(commands.Cog):
 
     @app_commands.command(name="reload", description="コマンドを再読み込みします")
     async def reload(self, interaction: discord.Interaction):
-        await interaction.response.defer()
-        try:
-            # このコグを再読み込み
-            await self.bot.reload_extension('notify')
+        # ephemeral=Trueでメッセージ送った人にだけメッセージ返す
+        await interaction.response.defer(ephemeral=True)
 
-            # ギルドIDを変換
-            guild = discord.Object(id=interaction.guild_id)
+        # 全てのコグの再読み込み
+        for cog in self.bot.extensions:
+            await self.bot.reload_extension(cog)
 
-            # スラッシュコマンドの再同期
-            self.bot.tree.copy_global_to(guild=guild)
-            await self.bot.tree.sync(guild=guild)
+        # ギルドIDを変換
+        guild = discord.Object(id=interaction.guild_id)
 
-            # ephemeral=Trueでメッセージ送った人にだけメッセージ返す
-            await interaction.followup.send("コマンドを再読み込みしました", ephemeral=True)
-        except discord.HTTPException as e:
-            await interaction.followup.send("エラーが発生しました", ephemeral=True)
-            raise e
+        # スラッシュコマンドの再同期
+        self.bot.tree.copy_global_to(guild=guild)
+        await self.bot.tree.sync(guild=guild)
+
+        await interaction.edit_original_response(content="コマンドを再読み込みしました")
 
     @app_commands.command(name="interact_test", description="インタラクトテストです")
     @app_commands.describe(your_choice="あなたは何を選ぶ？", your_name="あとあなたの名前は？")
@@ -133,4 +131,4 @@ class TwitchNotify(commands.Cog):
 # 1度だけ実行される
 async def setup(bot):
     await bot.add_cog(TwitchNotify(bot))
-    print("notify.pyです。cogがadd、もしくはreloadされた気がします")
+    print("notify.pyが読み込まれました")

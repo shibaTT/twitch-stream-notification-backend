@@ -8,7 +8,6 @@
 
 import os
 from flask import Flask, request, abort
-from notify import TwitchNotify
 from discord import Webhook
 from discord.ext import commands
 import aiohttp  # 他にいいライブラリがあるならそっち使う
