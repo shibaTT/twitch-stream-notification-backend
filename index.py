@@ -40,8 +40,14 @@ def hello_message():
 def streaming_start_detection():
     # Detects the start of a live Twitch broadcast (on webhook)
     if request.method == 'POST':
+        data = request.get_json()
         print(request.json)
-        return 'thank you post', 200
+
+        # subのchallengeだったら値をそのまま返す
+        if data.get("challange"):
+            return data.get("challange"), 200
+
+        return "", 200
     else:
         abort(400)
 

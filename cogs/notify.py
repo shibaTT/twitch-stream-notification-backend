@@ -101,17 +101,7 @@ class TwitchNotify(commands.Cog):
         await interaction.followup.send("You are selected " + twitch_id +
                                         ", and set channel is " +
                                         server_channel.name)
-        # DBにIDが登録されているかチェックする
-        #  - DBに登録されていなければ、IDが存在するかチェックする
-        #    - IDが存在すれば、TwitchAPIにWebhookのサブスクライブをし、DBに登録する
-        #  - DBに登録されていれば、サブスクライバーテーブルにチャンネルIDを追加する
-        #    - チャンネルIDではなく、当該チャンネルにWebhookを送信するための
-        #      URLを取得して保存する方針に変えます
-        # Webhookで送信するためにはまずチャンネルに対してcreate_webhookをする必要がある
-        # その際に、アバター写真やユーザー名を設定する必要があるが、
-        # そのためにはClient.application_info()を設定し、
-        # nameやiconなどを取得して設定するのが丸いと思う
-        # ただし、後からBOT名などを変えても反映はされないので注意
+        
 
     @commands.command(name="notification",
                       description="Description of the notification command")
