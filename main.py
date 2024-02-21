@@ -19,9 +19,6 @@ load_dotenv()
 intents = discord.Intents.default()
 intents.message_content = True
 
-# コグ一覧
-COGS = ["notify", "error"]
-
 # 名前下に表示されるアクティビティの設定
 activity = discord.CustomActivity("play /help to help you.",
                                   emoji=discord.PartialEmoji(name="U+261D"))
@@ -60,8 +57,9 @@ async def on_message(message):
 
 # Cogの登録
 async def add_cogs():
-    for cog in COGS:
-        await client.load_extension(cog)
+    for cog in os.listdir("cogs"):
+        if cog.endswith(".py"):
+            await client.load_extension(f"cogs.{cog[:-3]}")
 
     print("COG読み込み終わり！")
 
