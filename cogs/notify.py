@@ -3,6 +3,8 @@ from discord import app_commands
 from discord.ext import commands
 from views.discord_view import SampleView
 
+from database.manage_db import add_twitch_subscribe
+
 
 # Modal Test
 class SampleModal(discord.ui.Modal, title="Test"):
@@ -98,9 +100,18 @@ class TwitchNotify(commands.Cog):
         # await interaction.followup.send(command_view.value)
 
         await interaction.response.defer()
-        await interaction.followup.send("You are selected " + twitch_id +
-                                        ", and set channel is " +
-                                        server_channel.name)
+        botInfo = await self.bot.application_info()
+        result_message = await add_twitch_subscribe(twitch_id,
+                                                    interaction.guild_id,
+                                                    server_channel,
+                                                    interaction.user.id,
+                                                    botInfo.icon)
+
+        if result_message:
+            await interaction.edit_original_response(content="エラーが発生しました。" +
+                                                     result_message)
+        else:
+            await interaction.edit_original_response(content="登録に成功しました")
 
     @commands.command(name="notification",
                       description="Description of the notification command")

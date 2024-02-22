@@ -14,6 +14,7 @@ and then copy the token for your bot and added it as a secret with the key of `T
 -   GUILD_ID: デバッグしたいギルドの ID、なくてもいいがスラッシュコマンドの即時反映のために欲しい
 -   TWITCH_CLIENT_ID: TwitchのクライアントID
 -   TWITCH_CLIENT_SECRET: Twitchの秘密鍵
+-   TWITCH_ACCESS_TOKEN: Twitchのアプリアクセストークン
 -   BASEURL: このアプリケーションが動作するベースとなるURL（origin）
 
 ## FAQ

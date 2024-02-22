@@ -22,9 +22,9 @@ class DatabaseConnector:
         self.conn.close()
 
 
-async def add_twitch_subscribe(twitch_name: str, guild_id: str,
-                               channel: discord.TextChannel, user_id: str,
-                               avatar) -> str | None:
+async def add_twitch_subscribe(twitch_name: str, guild_id: str | int,
+                               channel: discord.TextChannel,
+                               user_id: str | int, avatar) -> str | None:
     """
     Twitchの配信者の配信開始のサブスクをしてDBに登録する
     
@@ -55,31 +55,34 @@ async def add_twitch_subscribe(twitch_name: str, guild_id: str,
         users_result = db.execute(
             "SELECT * FROM users WHERE user_id = ? AND guild_id = ?",
             (user_id, guild_id)).fetchall()
+        print("users", users_result)
         if len(users_result) > 0:
             # 既に紐づいているのでパス
             pass
         else:
             # まだ紐づいていないのでDBに登録する
             now = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-            db.execute("INSERT INTO user_channels VALUES (?, ?, ?, ?, ?)",
-                       (user_id, guild_id, now, now, None))
+            db.execute("INSERT INTO users VALUES (?, ?, ?, ?, ?)",
+                       (user_id, guild_id, now, now, ""))
 
         # ギルドにチャンネルを紐づける
         guilds_result = db.execute(
             "SELECT * FROM guilds WHERE guild_id = ? AND channel_id = ?",
             (guild_id, channel.id)).fetchall()
+        print("guilds", guilds_result)
         if len(guilds_result) > 0:
             # 既に紐づいているのでパス
             pass
         else:
             now = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
             db.execute("INSERT INTO guilds VALUES (?, ?, ?, ?, ?)",
-                       (guild_id, channel.id, now, now, None))
+                       (guild_id, channel.id, now, now, ""))
 
         # 通知する配信者とチャンネルをDBに登録する
         subscribe_result = db.execute(
             "SELECT * FROM streamers WHERE streamer_id = ?",
-            (twitch_name)).fetchall()
+            (twitch_name, )).fetchall()
+        print("stream", subscribe_result)
         if len(subscribe_result) > 0:
             # すでにDBに登録されている ＝ すでにサブスクライブ済み
             # なので、既に通知まで登録済みでなければDBに登録だけする
@@ -88,7 +91,7 @@ async def add_twitch_subscribe(twitch_name: str, guild_id: str,
                 db.execute(
                     "INSERT INTO streamers VALUES (?, ?, ?, ?, ?, ?, ?)",
                     (subscribe_result[0][0], twitch_name, channel.id, True,
-                     now, now, None))
+                     now, now, ""))
 
         else:
             # 登録されていない場合はTwitchにサブスクライブする
@@ -106,14 +109,15 @@ async def add_twitch_subscribe(twitch_name: str, guild_id: str,
 
             # 配信者ID・配信者名・通知先チャンネルIDを登録する
             now = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-            db.execute("INSERT INTO streamers VALUES (?, ?, ?, ?, ?, ?, ?)",
-                       (twitch_id["id"], twitch_name, channel.id, True, now,
-                        now, None))
+            db.execute(
+                "INSERT INTO streamers VALUES (?, ?, ?, ?, ?, ?, ?)",
+                (twitch_id["id"], twitch_name, channel.id, True, now, now, ""))
 
         # チャンネルテーブルに該当のチャンネルIDあるかどうか
         channels_result = db.execute(
             "SELECT * FROM channels WHERE channel_id = ?",
             (str(channel.id))).fetchall()
+        print("channels", channels_result)
 
         if len(channels_result) > 0:
             # 既にチャンネル登録済みであれば無視
@@ -131,4 +135,4 @@ async def add_twitch_subscribe(twitch_name: str, guild_id: str,
 
             db.execute("INSERT INTO channels VALUES (?, ?, ?, ?, ?, ?, ?)",
                        (channel.id, channel.name, guild_id, webhook_result.url,
-                        now, now, None))
+                        now, now, ""))
