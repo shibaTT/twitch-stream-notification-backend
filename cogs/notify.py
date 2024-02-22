@@ -84,10 +84,10 @@ class TwitchNotify(commands.Cog):
         await interaction.response.send_modal(SampleModal())
 
     @app_commands.command(name="add_twitch_channel",
-                          description="Twitchチャンネルを追加します")
+                          description="通知するTwitchチャンネルを追加します")
     @app_commands.describe(twitch_id="TwitchのIDを入力してください",
                            server_channel="送信するDiscordのチャンネル名を選択してください")
-    @app_commands.checks.bot_has_permissions(manage_webhooks=True)
+    # @app_commands.checks.bot_has_permissions(manage_webhooks=True)
     async def _add_twitch_channel(self, interaction: discord.Interaction,
                                   twitch_id: str,
                                   server_channel: discord.TextChannel):
@@ -101,7 +101,6 @@ class TwitchNotify(commands.Cog):
         await interaction.followup.send("You are selected " + twitch_id +
                                         ", and set channel is " +
                                         server_channel.name)
-        
 
     @commands.command(name="notification",
                       description="Description of the notification command")

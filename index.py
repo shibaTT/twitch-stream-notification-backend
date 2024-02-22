@@ -6,13 +6,13 @@
 ## こういうのを使ってWebhookを受け取って動かすのが良いのではないかと思う
 ## その代わり、セキュリティ対策はしっかりやる必要がある（テスト含めて）
 
-import os
+import os, sys, asyncio
 from flask import Flask, request, abort
 from discord import Webhook
 from discord.ext import commands
 import aiohttp  # 他にいいライブラリがあるならそっち使う
+from database.manage_db import DatabaseConnector
 
-import sys, asyncio
 
 # バージョンが低いとflaskでasyncioが動かないらしいので対策
 if sys.platform == "win32" and (3, 8, 0) <= sys.version_info < (3, 9, 0):
@@ -43,7 +43,7 @@ def streaming_start_detection():
         data = request.get_json()
         print(request.json)
 
-        # subのchallengeだったら値をそのまま返す
+        # subのchallengeだったらDBに登録して値をそのまま返す
         if data.get("challange"):
             return data.get("challange"), 200
 
