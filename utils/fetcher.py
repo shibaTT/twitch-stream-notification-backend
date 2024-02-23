@@ -5,9 +5,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-
-def get_twitch_channel_id(channel_name: str) -> dict:
-    # TwitchのチャンネルIDを取得する
+def get_app_access_token() -> str:
     # まずはApp Access Tokenを取得する
     url = "https://id.twitch.tv/oauth2/token"
     params = {
@@ -24,20 +22,22 @@ def get_twitch_channel_id(channel_name: str) -> dict:
         response = urllib.request.urlopen(req)
         data = json.loads(response.read().decode("utf-8"))
         print("アクセストークン取得完了！")
+        return data["access_token"]
     except urllib.error.HTTPError as error:
         print(error.fp.read())
-        return {
-            "status": error.code,
-            "reason": error.reason,
-            "message": "アクセストークン取得エラー"
-        }
+        return ""
+
+
+def get_twitch_channel_id(channel_name: str) -> dict:
+    # TwitchのチャンネルIDを取得する
+    access_token = get_app_access_token()
 
     url = 'https://api.twitch.tv/helix/users'
     params = {
         'login': channel_name,
     }
     headers = {
-        "Authorization": "Bearer " + data["access_token"],
+        "Authorization": "Bearer " + access_token,
         "Client-Id": os.environ["TWITCH_CLIENT_ID"]
     }
 
@@ -74,6 +74,8 @@ def subscribe_twitch_channel(twitch_id: str) -> dict:
     if not base_url or not twitch_secret:
         return {"status": 999, "reason": "baseurlまたはtwitch_secretが設定されていません"}
 
+    access_token = get_app_access_token()
+
     url = 'https://api.twitch.tv/helix/eventsub/subscriptions'
     body = {
         "type": "stream.online",
@@ -88,7 +90,9 @@ def subscribe_twitch_channel(twitch_id: str) -> dict:
         }
     }
     headers = {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
+        "Authorization": "Bearer " + access_token,
+        "Client-Id": os.environ["TWITCH_CLIENT_ID"],
     }
 
     req = urllib.request.Request(url, json.dumps(body).encode(), headers)
@@ -98,6 +102,7 @@ def subscribe_twitch_channel(twitch_id: str) -> dict:
             return {"status": 200, "data": data}
     except urllib.error.HTTPError as error:
         # 4xxエラー、5xxエラー
+        print(error.code, error.reason, error.fp.read())
         return {
             "status": error.code,
             "reason": error.reason,

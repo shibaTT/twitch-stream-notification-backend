@@ -19,7 +19,7 @@ class SampleModal(discord.ui.Modal, title="Test"):
 
 class TwitchNotify(commands.Cog):
 
-    def __init__(self, bot):
+    def __init__(self, bot: discord.Client):
         self.bot = bot
 
     @app_commands.command(
@@ -99,13 +99,14 @@ class TwitchNotify(commands.Cog):
         # await interaction.response.send_message("", view=command_view)
         # await interaction.followup.send(command_view.value)
 
-        await interaction.response.defer()
+        await interaction.response.defer(ephemeral=True)
         botInfo = await self.bot.application_info()
+        botIcon = await botInfo.icon.read()
         result_message = await add_twitch_subscribe(twitch_id,
                                                     interaction.guild_id,
                                                     server_channel,
                                                     interaction.user.id,
-                                                    botInfo.icon)
+                                                    botIcon)
 
         if result_message:
             await interaction.edit_original_response(content="エラーが発生しました。" +
