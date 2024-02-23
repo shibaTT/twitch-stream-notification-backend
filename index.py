@@ -62,7 +62,7 @@ async def test_function():
     return 'test function', 200
 
 
-app.run(debug=True, port=3000, host='0.0.0.0')  # 0.0.0.0で外部に公開らしい
+app.run(debug=True, port=3939, host='0.0.0.0')  # 0.0.0.0で外部に公開らしい
 if __name__ == 'index':
     # 最初に1回だけ走るなにか
     print("Flask is running!")
