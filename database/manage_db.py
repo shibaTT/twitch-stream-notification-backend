@@ -27,7 +27,7 @@ async def add_twitch_subscribe(twitch_name: str, guild_id: str | int,
                                user_id: str | int, avatar) -> str | None:
     """
     Twitchの配信者の配信開始のサブスクをしてDBに登録する
-    
+
     ついでにDiscordのテキストチャンネルにWebhookの登録をし、それをDBにも登録する
 
     twitch_name: Twitchのユーザー名,
@@ -116,7 +116,7 @@ async def add_twitch_subscribe(twitch_name: str, guild_id: str | int,
         # チャンネルテーブルに該当のチャンネルIDあるかどうか
         channels_result = db.execute(
             "SELECT * FROM channels WHERE channel_id = ?",
-            (str(channel.id))).fetchall()
+            (str(channel.id),)).fetchall()
         print("channels", channels_result)
 
         if len(channels_result) > 0:
