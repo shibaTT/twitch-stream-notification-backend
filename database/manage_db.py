@@ -30,11 +30,12 @@ async def add_twitch_subscribe(twitch_name: str, guild_id: str | int,
 
     ついでにDiscordのテキストチャンネルにWebhookの登録をし、それをDBにも登録する
 
-    twitch_name: Twitchのユーザー名,
-    guild_id: 通知するサーバーのID,
-    channel: 通知するチャンネル情報
-    user_id: コマンド送信ユーザーのID,
-    avatar: コマンド送信ユーザーのアバターアイコン
+    Args:
+        twitch_name (str): Twitchのユーザー名
+        guild_id (str | int): 通知するサーバーのID
+        channel (discord.TextChannel): 通知するチャンネル情報
+        user_id (str | int): コマンド送信ユーザーのID
+        avatar (str): コマンド送信ユーザーのアバターアイコン
     """
 
     # TODOS:
@@ -89,8 +90,8 @@ async def add_twitch_subscribe(twitch_name: str, guild_id: str | int,
             if channel.id not in (x[1] for x in subscribe_result):
                 now = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
                 db.execute(
-                    "INSERT INTO streamers VALUES (?, ?, ?, ?, ?, ?, ?)",
-                    (subscribe_result[0][0], twitch_name, channel.id, True,
+                    "INSERT INTO streamers VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+                    (subscribe_result[0][0], twitch_name,subscribe_result[0][2] , channel.id, True,
                      now, now, ""))
 
         else:
@@ -110,8 +111,8 @@ async def add_twitch_subscribe(twitch_name: str, guild_id: str | int,
             # 配信者ID・配信者名・通知先チャンネルIDを登録する
             now = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
             db.execute(
-                "INSERT INTO streamers VALUES (?, ?, ?, ?, ?, ?, ?)",
-                (twitch_id["id"], twitch_name, channel.id, True, now, now, ""))
+                "INSERT INTO streamers VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+                (twitch_id["id"], twitch_name, twitch_id["display_name"], channel.id, True, now, now, ""))
 
         # チャンネルテーブルに該当のチャンネルIDあるかどうか
         channels_result = db.execute(
@@ -136,3 +137,25 @@ async def add_twitch_subscribe(twitch_name: str, guild_id: str | int,
             db.execute("INSERT INTO channels VALUES (?, ?, ?, ?, ?, ?, ?)",
                        (channel.id, channel.name, guild_id, webhook_result.url,
                         now, now, ""))
+
+async def read_streamers(streamer_id: str | int) -> list:
+    """
+    配信者IDから配信者情報を取得する
+
+    Args:
+        streamer_id (str | int): 配信者ID
+    """
+    with DatabaseConnector() as db:
+        result = db.execute("SELECT * FROM streamers WHERE streamer_id = ?", (streamer_id,)).fetchall()
+        return result
+
+async def read_channels_webhook(channel_id: str | int) -> list:
+    """
+    チャンネルIDからWebhookのURLを取得する
+
+    Args:
+        channel_id (str | int): チャンネルID
+    """
+    with DatabaseConnector() as db:
+        result = db.execute("SELECT * FROM channels WHERE channel_id = ?", (channel_id,)).fetchall()
+        return result
