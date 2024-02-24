@@ -6,12 +6,14 @@
 ## こういうのを使ってWebhookを受け取って動かすのが良いのではないかと思う
 ## その代わり、セキュリティ対策はしっかりやる必要がある（テスト含めて）
 
+# Async使えないよって言われたら `pip install flask[async]` を実行すると多分動く
+
 import os, sys, asyncio
 from flask import Flask, request, abort
 from discord import Webhook
 from discord.ext import commands
 import aiohttp  # 他にいいライブラリがあるならそっち使う
-from database.manage_db import DatabaseConnector
+from utils.sender import send_stream_online
 
 
 # バージョンが低いとflaskでasyncioが動かないらしいので対策
@@ -37,18 +39,20 @@ def hello_message():
 
 
 @app.route("/api/online", methods=['POST'])
-def streaming_start_detection():
+async def streaming_start_detection():
     # Detects the start of a live Twitch broadcast (on webhook)
     if request.method == 'POST':
         data = request.get_json()
         print(request.json)
 
         # subのchallengeだったらDBに登録して値をそのまま返す
-        if data.get("challange"):
-            return data.get("challange"), 200
+        if data.get("challenge"):
+            return data.get("challenge"), 200
 
+        await send_stream_online(data["event"]["broadcaster_user_id"])
         return "", 200
     else:
+        # GETだったら拒否
         abort(400)
 
 
