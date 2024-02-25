@@ -27,7 +27,7 @@ async def send_stream_online(streamer_id: str | int):
 
         if not channels or not channels[0][3]:
             # チャンネルが存在しない、またはWebhookのURLが存在しないのでスキップ
-            print("チャンネルが存在しない、またはWebhookのURLが存在しないためスキップします")
+            print("チャンネルが存在しない、またはWebhookのURLが存在しないため処理をスキップします")
             continue
 
         async with aiohttp.ClientSession() as session:
