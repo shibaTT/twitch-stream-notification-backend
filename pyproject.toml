@@ -6,10 +6,10 @@ authors = ["Replit user <<>>"]
 license = "MIT"
 readme = "README.md"
 # ↓poetryの並行起動時にエラーが出るのでコメントアウト
-# packages = [{include = "twitch_stream_notification_backend"}] 
+# packages = [{include = "twitch_stream_notification_backend"}]
 
 [tool.poetry.dependencies]
-python = ">=3.10.0,<3.11"
+python = ">=3.10.0,<=3.12"
 discord = "^2.3.2"
 discord-py = "^2.3.2"
 flask = "^3.0.2"
