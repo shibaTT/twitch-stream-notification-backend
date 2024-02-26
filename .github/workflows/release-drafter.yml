@@ -20,7 +20,7 @@ jobs:
       contents: write
       # リリースノートを書くためwrite用のpermissionを付与
       pull-requests: write
-    if: github.event.pull_request.merged == true && startsWith(github.head_ref, 'release')
+    if: github.event.pull_request.merged == true && startsWith(github.head_ref, 'develop')
     runs-on: ubuntu-latest
     steps:
       - name: Create Release Tag And Note
